@@ -41,11 +41,13 @@ class CTCentral : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
 
     
     public static func startScanning() {
-        if (instance._centralMgr.isScanning) {
-            return
-        }
         if (instance.poweredOn == false) {
             instance.startScanningWhenPoweredOn = true
+            return
+        }
+        
+        if (instance._centralMgr.isScanning) {
+            print("Already scanning - no need to scan again")
             return
         }
         

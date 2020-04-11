@@ -25,9 +25,6 @@ class CTPeripheral : NSObject, CBPeripheralManagerDelegate {
     }
     
     public static func startAdvertising() {
-        if (instance._periphMgr.isAdvertising) {
-            return
-        }
         if (instance.ready == false) {
             instance.shouldAdvertiseWhenReady = true
             return
@@ -37,6 +34,12 @@ class CTPeripheral : NSObject, CBPeripheralManagerDelegate {
             CBAdvertisementDataLocalNameKey: kCTLocalName,
             CBAdvertisementDataServiceUUIDsKey: [CBUUID(string: kCTServiceUuid)]
         ]
+        
+        if (instance._periphMgr.isAdvertising) {
+            print("Already advertising - no need to advertise again")
+            return
+        }
+
         instance._periphMgr.startAdvertising(advertData)
     }
     
