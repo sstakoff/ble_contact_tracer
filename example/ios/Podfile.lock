@@ -1,0 +1,22 @@
+PODS:
+  - ble_contact_tracer (0.0.1):
+    - Flutter
+  - Flutter (1.0.0)
+
+DEPENDENCIES:
+  - ble_contact_tracer (from `.symlinks/plugins/ble_contact_tracer/ios`)
+  - Flutter (from `Flutter`)
+
+EXTERNAL SOURCES:
+  ble_contact_tracer:
+    :path: ".symlinks/plugins/ble_contact_tracer/ios"
+  Flutter:
+    :path: Flutter
+
+SPEC CHECKSUMS:
+  ble_contact_tracer: 4ccaea97b65fc5223ff66e34fb82951199efce4b
+  Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+
+PODFILE CHECKSUM: c34e2287a9ccaa606aeceab922830efb9a6ff69a
+
+COCOAPODS: 1.9.1
