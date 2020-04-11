@@ -25,6 +25,9 @@ class CTPeripheral : NSObject, CBPeripheralManagerDelegate {
     }
     
     public static func startAdvertising() {
+        if (instance._periphMgr.isAdvertising) {
+            return
+        }
         if (instance.ready == false) {
             instance.shouldAdvertiseWhenReady = true
             return
@@ -35,6 +38,10 @@ class CTPeripheral : NSObject, CBPeripheralManagerDelegate {
             CBAdvertisementDataServiceUUIDsKey: [CBUUID(string: kCTServiceUuid)]
         ]
         instance._periphMgr.startAdvertising(advertData)
+    }
+    
+    public static func stopAdvertising() {
+        instance._periphMgr.stopAdvertising()
     }
     
     override init() {

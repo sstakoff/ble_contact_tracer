@@ -2,20 +2,33 @@ PODS:
   - ble_contact_tracer (0.0.1):
     - Flutter
   - Flutter (1.0.0)
+  - flutter_udid (0.0.1):
+    - Flutter
+    - SAMKeychain
+  - SAMKeychain (1.5.3)
 
 DEPENDENCIES:
   - ble_contact_tracer (from `.symlinks/plugins/ble_contact_tracer/ios`)
   - Flutter (from `Flutter`)
+  - flutter_udid (from `.symlinks/plugins/flutter_udid/ios`)
+
+SPEC REPOS:
+  trunk:
+    - SAMKeychain
 
 EXTERNAL SOURCES:
   ble_contact_tracer:
     :path: ".symlinks/plugins/ble_contact_tracer/ios"
   Flutter:
     :path: Flutter
+  flutter_udid:
+    :path: ".symlinks/plugins/flutter_udid/ios"
 
 SPEC CHECKSUMS:
   ble_contact_tracer: 4ccaea97b65fc5223ff66e34fb82951199efce4b
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+  flutter_udid: c9d59b0a440e137882faa5cf53a3501e906fb8c2
+  SAMKeychain: 483e1c9f32984d50ca961e26818a534283b4cd5c
 
 PODFILE CHECKSUM: c34e2287a9ccaa606aeceab922830efb9a6ff69a
 

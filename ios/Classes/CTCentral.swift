@@ -41,6 +41,9 @@ class CTCentral : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
 
     
     public static func startScanning() {
+        if (instance._centralMgr.isScanning) {
+            return
+        }
         if (instance.poweredOn == false) {
             instance.startScanningWhenPoweredOn = true
             return
@@ -54,6 +57,10 @@ class CTCentral : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
         if (instance._centralMgr.isScanning) {
             print("Scanning started....")
         }
+    }
+    
+    public static func stopScanning() {
+        instance._centralMgr.stopScan()
     }
     
     
@@ -121,6 +128,7 @@ class CTCentral : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
 
         
         print("Value was: \(str)")
+        SwiftBleContactTracerPlugin.sendDeviceInfoToDart(deviceUdid: str)
         
         let savedPeriph = _discoveredPeripherals[peripheral.identifier]
         if (savedPeriph != nil) {

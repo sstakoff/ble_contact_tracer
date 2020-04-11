@@ -3,8 +3,12 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:ble_contact_tracer/ble_contact_tracer.dart';
+import 'package:flutter_udid/flutter_udid.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  BleContactTracer.initializePlugin();
+
   runApp(MyApp());
 }
 
@@ -14,23 +18,31 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
+  String _udid;
+
+  List<String> _discoveredDevices;
 
   @override
   void initState() {
     super.initState();
+    _discoveredDevices = List();
+    BleContactTracer.discoveredDevices.listen((udid) {
+      if (_discoveredDevices.contains(udid) == false) {
+        _discoveredDevices.add(udid);
+        if (mounted) {
+          setState(() {});
+        }
+      }
+    });
     initPlatformState();
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initPlatformState() async {
-    String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      platformVersion = await BleContactTracer.platformVersion;
-    } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
-    }
+    String udid = await FlutterUdid.consistentUdid;
+
+    BleContactTracer.advertiseMyDevice(deviceUdid: udid);
+    BleContactTracer.scanForDevices();
 
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
@@ -38,7 +50,7 @@ class _MyAppState extends State<MyApp> {
     if (!mounted) return;
 
     setState(() {
-      _platformVersion = platformVersion;
+      _udid = udid;
     });
   }
 
@@ -50,7 +62,20 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Plugin example app'),
         ),
         body: Center(
-          child: Text('Running on: $_platformVersion\n'),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text('My UDID: $_udid', textAlign: TextAlign.start,),
+              Text('Discovered Devices'),
+              _discoveredDevices.length == 0 ? Container() : ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: _discoveredDevices.length,
+                  itemBuilder: (context, idx) {
+                    return Text(_discoveredDevices[idx]);
+                  }),
+            ],
+          ),
         ),
       ),
     );
