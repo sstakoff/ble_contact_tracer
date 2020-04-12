@@ -8,6 +8,11 @@
 import Foundation
 import CoreBluetooth
 
+struct DeviceInfo {
+    var peripheral: CBPeripheral
+    var rssi: NSNumber
+}
+
 @available(iOS 9.0, *)
 class CTCentral : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
     private static var instance: CTCentral!
@@ -16,7 +21,7 @@ class CTCentral : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
     
     private var _centralMgr: CBCentralManager!
     
-    private var _discoveredPeripherals: [UUID: CBPeripheral]!
+    private var _discoveredPeripherals: [UUID: DeviceInfo]!
     
     public static func createCentral() {
         instance = CTCentral()
@@ -77,7 +82,7 @@ class CTCentral : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
         print("Discovered a peripheral: \(peripheral.identifier.uuidString) with RSSI: \(RSSI)")
         
-        _discoveredPeripherals[peripheral.identifier] = peripheral
+        _discoveredPeripherals[peripheral.identifier] = DeviceInfo(peripheral: peripheral, rssi: RSSI)
         peripheral.delegate = self
         _centralMgr.connect(peripheral, options: nil)
         
@@ -134,15 +139,21 @@ class CTCentral : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
             return
         }
         
-        let str = String(decoding: characteristic.value!, as: UTF8.self)
+        let discoveredUDID = String(decoding: characteristic.value!, as: UTF8.self)
 
         
-        print("Value was: \(str)")
-        SwiftBleContactTracerPlugin.sendDeviceInfoToDart(deviceUdid: str)
+        print("UDID of discovered device: \(discoveredUDID)")
         
-        let savedPeriph = _discoveredPeripherals[peripheral.identifier]
-        if (savedPeriph != nil) {
-            _centralMgr.cancelPeripheralConnection(savedPeriph!)
+
+        
+        let savedDeviceInfo = _discoveredPeripherals[peripheral.identifier]
+        let rssi = savedDeviceInfo?.rssi ?? 0
+        
+        SwiftBleContactTracerPlugin.sendDeviceInfoToDart(deviceUdid: discoveredUDID, rssi: rssi)
+
+        
+        if (savedDeviceInfo != nil) {
+            _centralMgr.cancelPeripheralConnection(savedDeviceInfo!.peripheral)
             _discoveredPeripherals.removeValue(forKey: peripheral.identifier)
         }
 

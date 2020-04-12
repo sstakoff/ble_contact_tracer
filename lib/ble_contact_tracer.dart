@@ -4,12 +4,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 
 
+class DeviceInfo {
+  String udid;
+  int rssi;
+
+  DeviceInfo(this.udid, this.rssi);
+}
+
 class BleContactTracer {
   static BleContactTracer instance;
   MethodChannel _channel;
 
 
-  StreamController<String> _streamController;
+  StreamController<DeviceInfo> _streamController;
 
   factory BleContactTracer() {
     return instance;
@@ -25,10 +32,10 @@ class BleContactTracer {
   BleContactTracer._internal() {
     _channel = MethodChannel('ble_contact_tracer');
     _channel.setMethodCallHandler(_handler);
-    _streamController = StreamController<String>.broadcast();
+    _streamController = StreamController<DeviceInfo>.broadcast();
   }
 
-  static Stream<String> get discoveredDevices => instance._streamController.stream;
+  static Stream<DeviceInfo> get discoveredDevices => instance._streamController.stream;
 
 
   static Future<String> get platformVersion async {
@@ -71,8 +78,9 @@ class BleContactTracer {
         var args = call.arguments;
 
         var udid = args['deviceUdid'];
+        var rssi = args['rssi'];
         if (instance._streamController.hasListener) {
-          instance._streamController.add(udid);
+          instance._streamController.add(DeviceInfo(udid, rssi));
         }
         break;
       default:

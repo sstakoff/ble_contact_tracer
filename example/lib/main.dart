@@ -24,7 +24,7 @@ class _MyAppState extends State<MyApp> {
   bool _advertChangePending = true;
   StreamSubscription _streamSubscription;
 
-  List<String> _discoveredDevices;
+  List<DeviceInfo> _discoveredDevices;
 
   @override
   void initState() {
@@ -59,13 +59,18 @@ class _MyAppState extends State<MyApp> {
     });
 
 
-    _streamSubscription = BleContactTracer.discoveredDevices.listen((udid) {
-      if (_discoveredDevices.contains(udid) == false) {
-        _discoveredDevices.add(udid);
-        if (mounted) {
-          setState(() {});
-        }
+    _streamSubscription = BleContactTracer.discoveredDevices.listen((info) {
+      var prevFoundDevice = _discoveredDevices.firstWhere((element) => element.udid == info.udid, orElse: ()=>null);
+
+      if (prevFoundDevice == null) {
+        _discoveredDevices.add(info);
+      } else {
+        prevFoundDevice.rssi = info.rssi;
       }
+      if (mounted) {
+        setState(() {});
+      }
+
     });
 
     // If the widget was removed from the tree while the asynchronous platform
@@ -169,7 +174,7 @@ class _MyAppState extends State<MyApp> {
                   shrinkWrap: true,
                   itemCount: _discoveredDevices.length,
                   itemBuilder: (context, idx) {
-                    return Text(_discoveredDevices[idx].substring(0,10));
+                    return Text('${_discoveredDevices[idx].udid.substring(0,10)}: Strength: ${_discoveredDevices[idx].rssi}');
                   }),
             ],
           ),

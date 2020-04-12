@@ -56,7 +56,7 @@ public class SwiftBleContactTracerPlugin: NSObject, FlutterPlugin {
     }
   }
     
-    public static func sendDeviceInfoToDart(deviceUdid: String) {
-        channel.invokeMethod("discoveredDevice", arguments: ["deviceUdid": deviceUdid])
+    public static func sendDeviceInfoToDart(deviceUdid: String, rssi: NSNumber) {
+        channel.invokeMethod("discoveredDevice", arguments: ["deviceUdid": deviceUdid, "rssi": rssi])
     }
 }
