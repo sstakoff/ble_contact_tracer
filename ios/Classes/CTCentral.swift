@@ -25,8 +25,11 @@ class CTCentral : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
     override init() {
         super.init()
         _discoveredPeripherals = [:]
-        _centralMgr = CBCentralManager()
-        _centralMgr.delegate = self
+        _centralMgr = CBCentralManager(delegate: self, queue: nil, options: [CBCentralManagerOptionRestoreIdentifierKey: kCTCentralManagerRestoreId])
+    }
+    
+    func centralManager(_ central: CBCentralManager, willRestoreState dict: [String : Any]) {
+        print("Restored central manager state")
     }
     
     func centralManagerDidUpdateState(_ central: CBCentralManager) {

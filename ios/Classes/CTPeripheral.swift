@@ -49,8 +49,11 @@ class CTPeripheral : NSObject, CBPeripheralManagerDelegate {
     
     override init() {
         super.init()
-        _periphMgr = CBPeripheralManager()
-        _periphMgr.delegate = self
+        _periphMgr = CBPeripheralManager(delegate: self, queue: nil, options: [CBPeripheralManagerOptionRestoreIdentifierKey: kCTPeriphManagerRestoreId])
+    }
+    
+    func peripheralManager(_ peripheral: CBPeripheralManager, willRestoreState dict: [String : Any]) {
+        print("Restored peripheral manager state")
     }
     
     private func createServices() {
