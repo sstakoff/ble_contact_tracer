@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
-import 'package:flutter/services.dart';
 import 'package:ble_contact_tracer/ble_contact_tracer.dart';
 import 'package:flutter_udid/flutter_udid.dart';
 
@@ -36,6 +35,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void dispose() {
+    super.dispose();
     _streamSubscription.cancel();
   }
 
@@ -68,6 +68,7 @@ class _MyAppState extends State<MyApp> {
         prevFoundDevice.rssi = info.rssi;
         prevFoundDevice.lat = info.lat;
         prevFoundDevice.lon = info.lon;
+        prevFoundDevice.horizontalAccuracy = info.horizontalAccuracy;
       }
       if (mounted) {
         setState(() {});
@@ -176,7 +177,7 @@ class _MyAppState extends State<MyApp> {
                   shrinkWrap: true,
                   itemCount: _discoveredDevices.length,
                   itemBuilder: (context, idx) {
-                    return Text('${_discoveredDevices[idx].udid.substring(0,10)}: Strength: ${_discoveredDevices[idx].rssi} at: ${_discoveredDevices[idx].lat.toStringAsFixed(3)}, ${_discoveredDevices[idx].lon.toStringAsFixed(3)}');
+                    return Text('${_discoveredDevices[idx].udid.substring(0,10)}: Strength: ${_discoveredDevices[idx].rssi} at: ${_discoveredDevices[idx].lat.toStringAsFixed(3)}, ${_discoveredDevices[idx].lon.toStringAsFixed(3)} : Within: ${_discoveredDevices[idx].horizontalAccuracy.toStringAsFixed(1)}');
                   }),
             ],
           ),

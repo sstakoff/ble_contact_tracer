@@ -59,12 +59,13 @@ public class SwiftBleContactTracerPlugin: NSObject, FlutterPlugin {
     }
   }
     
-    public static func sendDeviceInfoToDart(deviceUdid: String, rssi: NSNumber, lat: Double, lon: Double) {
+    public static func sendDeviceInfoToDart(deviceUdid: String, rssi: NSNumber, lat: Double, lon: Double, horizontalAccuracy: Double) {
         channel.invokeMethod("discoveredDevice", arguments: [
             "deviceUdid": deviceUdid,
             "rssi": rssi,
             "lat": lat,
-            "lon": lon
+            "lon": lon,
+            "horizontalAccuracy": horizontalAccuracy
         ])
     }
 }

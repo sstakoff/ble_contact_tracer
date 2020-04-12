@@ -8,7 +8,7 @@
 import Foundation
 import CoreLocation
 
-typealias LocationCallback = (_ lat: Double, _ lon: Double) -> Void
+typealias LocationCallback = (_ lat: Double, _ lon: Double, _ horizontalAccuracy: Double) -> Void
 
 @available(iOS 9.0, *)
 class CTLocation : NSObject, CLLocationManagerDelegate {
@@ -50,14 +50,16 @@ class CTLocation : NSObject, CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         var lat: Double = 0
         var lon: Double = 0;
+        var horizAccuracy: Double = 0;
         if (locations.count > 0) {
             let latest = locations.last
             lat = latest?.coordinate.latitude ?? 0
             lon = latest?.coordinate.longitude ?? 0
+            horizAccuracy = latest?.horizontalAccuracy ?? 0
         }
         
         for cb in _callbacks {
-            cb(lat, lon);
+            cb(lat, lon, horizAccuracy);
         }
         
         _callbacks.removeAll()
@@ -66,7 +68,7 @@ class CTLocation : NSObject, CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         for cb in _callbacks {
-            cb(0, 0);
+            cb(0, 0, 0);
         }
         
         _callbacks.removeAll()
@@ -75,7 +77,7 @@ class CTLocation : NSObject, CLLocationManagerDelegate {
     
     func getLocation(callback: @escaping LocationCallback) {
         if (!authorized) {
-            callback(0,0)
+            callback(0,0,0)
             return
         }
         _callbacks.append(callback)

@@ -9,10 +9,11 @@ import Foundation
 import CoreBluetooth
 
 struct DeviceInfo {
-    var peripheral: CBPeripheral
-    var rssi: NSNumber
-    var lat: Double?
-    var lon: Double?
+    public var peripheral: CBPeripheral
+    public var rssi: NSNumber
+    public var lat: Double?
+    public var lon: Double?
+    public var horizontalAccuracy: Double?
 }
 
 @available(iOS 9.0, *)
@@ -170,8 +171,8 @@ class CTCentral : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
         let rssi = savedDeviceInfo?.rssi ?? 0
         
         // Get location info
-        CTLocation.instance.getLocation(callback: {(lat: Double, lon: Double) -> Void in
-            SwiftBleContactTracerPlugin.sendDeviceInfoToDart(deviceUdid: discoveredUDID, rssi: rssi, lat: lat, lon: lon)
+        CTLocation.instance.getLocation(callback: {(lat: Double, lon: Double, horizontalAccuracy: Double) -> Void in
+            SwiftBleContactTracerPlugin.sendDeviceInfoToDart(deviceUdid: discoveredUDID, rssi: rssi, lat: lat, lon: lon, horizontalAccuracy: horizontalAccuracy)
             if (savedDeviceInfo != nil) {
                 self._centralMgr.cancelPeripheralConnection(savedDeviceInfo!.peripheral)
                 self._discoveredPeripherals.removeValue(forKey: peripheral.identifier)

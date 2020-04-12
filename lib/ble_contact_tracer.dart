@@ -9,8 +9,9 @@ class DeviceInfo {
   int rssi;
   double lat;
   double lon;
+  double horizontalAccuracy;
 
-  DeviceInfo(this.udid, this.rssi, this.lat, this.lon);
+  DeviceInfo(this.udid, this.rssi, this.lat, this.lon, this.horizontalAccuracy);
 }
 
 class BleContactTracer {
@@ -29,6 +30,10 @@ class BleContactTracer {
     instance = BleContactTracer._internal();
     _initializePlugin(deviceUdid);
 
+  }
+
+  void dispose() {
+    _streamController.close();
   }
 
   BleContactTracer._internal() {
@@ -83,8 +88,9 @@ class BleContactTracer {
         var rssi = args['rssi'];
         var lat = args['lat'];
         var lon = args['lon'];
+        var horizAccuracy = args['horizontalAccuracy'];
         if (instance._streamController.hasListener) {
-          instance._streamController.add(DeviceInfo(udid, rssi, lat, lon));
+          instance._streamController.add(DeviceInfo(udid, rssi, lat, lon, horizAccuracy));
         }
         break;
       default:
