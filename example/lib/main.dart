@@ -151,6 +151,17 @@ class _MyAppState extends State<MyApp> {
                       },
                     ),
                   ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: RaisedButton(
+                      child: Text('Clear'),
+                      onPressed: () {
+                        setState(() {
+                          _discoveredDevices.clear();
+                        });
+                      },
+                    ),
+                  ),
                 ],
               ),
               Text('Discovered Devices'),
