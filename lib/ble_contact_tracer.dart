@@ -15,9 +15,10 @@ class BleContactTracer {
     return instance;
   }
 
-  static initializePlugin() {
+  static initializePlugin({@required String deviceUdid}) {
 
     instance = BleContactTracer._internal();
+    _initializePlugin(deviceUdid);
 
   }
 
@@ -35,13 +36,34 @@ class BleContactTracer {
     return version;
   }
 
-  static Future<bool>  advertiseMyDevice({@required String deviceUdid}) async {
-    return await instance._channel.invokeMethod('advertiseMyDevice', {'deviceUdid': deviceUdid});
+  static Future<bool>  _initializePlugin(String deviceUdid) async {
+    return await instance._channel.invokeMethod('initializePlugin', {'deviceUdid': deviceUdid});
+  }
+
+  static Future<bool>  advertiseMyDevice() async {
+    return await instance._channel.invokeMethod('advertiseMyDevice');
   }
 
   static Future<bool>  scanForDevices() async {
     return await instance._channel.invokeMethod('scanForDevices');
   }
+
+  static Future<bool>  stopAdvertising() async {
+    return await instance._channel.invokeMethod('stopAdvertising');
+  }
+
+  static Future<bool>  stopScanning() async {
+    return await instance._channel.invokeMethod('stopScanning');
+  }
+
+  static Future<bool>  isAdvertising() async {
+    return await instance._channel.invokeMethod('isAdvertising');
+  }
+
+  static Future<bool>  isScanning() async {
+    return await instance._channel.invokeMethod('isScanning');
+  }
+
 
   static Future<dynamic> _handler(MethodCall call) async {
     switch (call.method) {

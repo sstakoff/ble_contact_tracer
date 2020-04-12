@@ -68,6 +68,11 @@ class CTCentral : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
         instance._centralMgr.stopScan()
     }
     
+    public static func isScanning() -> Bool {
+        return instance._centralMgr.isScanning
+    }
+
+    
     
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
         print("Discovered a peripheral: \(peripheral.identifier.uuidString) with RSSI: \(RSSI)")

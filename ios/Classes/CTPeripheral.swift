@@ -47,6 +47,11 @@ class CTPeripheral : NSObject, CBPeripheralManagerDelegate {
         instance._periphMgr.stopAdvertising()
     }
     
+    public static func isAdvertising() -> Bool {
+        return instance._periphMgr.isAdvertising
+    }
+
+    
     override init() {
         super.init()
         _periphMgr = CBPeripheralManager(delegate: self, queue: nil, options: [CBPeripheralManagerOptionRestoreIdentifierKey: kCTPeriphManagerRestoreId])
