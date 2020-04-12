@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -18,7 +20,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _udid;
+  String _udid = 'Unknown';
 
   List<String> _discoveredDevices;
 
@@ -66,13 +68,13 @@ class _MyAppState extends State<MyApp> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text('My UDID: $_udid', textAlign: TextAlign.start,),
+              Text('My UDID: ${_udid.substring(0,min(10, _udid.length))}', textAlign: TextAlign.start,),
               Text('Discovered Devices'),
               _discoveredDevices.length == 0 ? Container() : ListView.builder(
                   shrinkWrap: true,
                   itemCount: _discoveredDevices.length,
                   itemBuilder: (context, idx) {
-                    return Text(_discoveredDevices[idx]);
+                    return Text(_discoveredDevices[idx].substring(0,10));
                   }),
             ],
           ),
