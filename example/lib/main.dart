@@ -66,6 +66,8 @@ class _MyAppState extends State<MyApp> {
         _discoveredDevices.add(info);
       } else {
         prevFoundDevice.rssi = info.rssi;
+        prevFoundDevice.lat = info.lat;
+        prevFoundDevice.lon = info.lon;
       }
       if (mounted) {
         setState(() {});
@@ -174,7 +176,7 @@ class _MyAppState extends State<MyApp> {
                   shrinkWrap: true,
                   itemCount: _discoveredDevices.length,
                   itemBuilder: (context, idx) {
-                    return Text('${_discoveredDevices[idx].udid.substring(0,10)}: Strength: ${_discoveredDevices[idx].rssi}');
+                    return Text('${_discoveredDevices[idx].udid.substring(0,10)}: Strength: ${_discoveredDevices[idx].rssi} at: ${_discoveredDevices[idx].lat.toStringAsFixed(3)}, ${_discoveredDevices[idx].lon.toStringAsFixed(3)}');
                   }),
             ],
           ),

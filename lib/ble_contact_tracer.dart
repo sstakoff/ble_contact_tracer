@@ -7,8 +7,10 @@ import 'package:flutter/services.dart';
 class DeviceInfo {
   String udid;
   int rssi;
+  double lat;
+  double lon;
 
-  DeviceInfo(this.udid, this.rssi);
+  DeviceInfo(this.udid, this.rssi, this.lat, this.lon);
 }
 
 class BleContactTracer {
@@ -79,8 +81,10 @@ class BleContactTracer {
 
         var udid = args['deviceUdid'];
         var rssi = args['rssi'];
+        var lat = args['lat'];
+        var lon = args['lon'];
         if (instance._streamController.hasListener) {
-          instance._streamController.add(DeviceInfo(udid, rssi));
+          instance._streamController.add(DeviceInfo(udid, rssi, lat, lon));
         }
         break;
       default:

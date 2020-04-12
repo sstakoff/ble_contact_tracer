@@ -8,6 +8,12 @@
 	<string>Need BLE all the time</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Track contact locations</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Track contact locations</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Track contact locations</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
 	<string>I&apos;m a peripheral</string>
 	<key>CFBundleIdentifier</key>

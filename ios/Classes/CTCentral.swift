@@ -11,6 +11,8 @@ import CoreBluetooth
 struct DeviceInfo {
     var peripheral: CBPeripheral
     var rssi: NSNumber
+    var lat: Double?
+    var lon: Double?
 }
 
 @available(iOS 9.0, *)
@@ -104,16 +106,24 @@ class CTCentral : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
             print("Error discovering services: \(error.debugDescription)")
             return
         }
-                
-        for service: CBService? in peripheral.services! {
-            if (service?.uuid.uuidString.lowercased() == kCTServiceUuid.lowercased()) {
+        
+        let svcCount = peripheral.services?.count ?? 0
+        var foundSvc = false
+        for idx in (0..<svcCount) {
+            let service = peripheral.services![idx]
+            if (service.uuid.uuidString.lowercased() == kCTServiceUuid.lowercased()) {
                 print("Discovered service on the peripheral")
-                peripheral.discoverCharacteristics([CBUUID(string: kCTDeviceUdidCharacteristicUuid)], for: service!)
+                foundSvc = true
+                peripheral.discoverCharacteristics([CBUUID(string: kCTDeviceUdidCharacteristicUuid)], for: service)
                 break
-
             }
         }
-    
+                
+        if (!foundSvc) {
+            print("Peripheral did not have correct service - cancelling")
+            _centralMgr.cancelPeripheralConnection(peripheral)
+        }
+
         
     }
     
@@ -123,12 +133,22 @@ class CTCentral : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
             return
         }
         
-        for ch: CBCharacteristic? in service.characteristics! {
-            if (ch?.uuid.uuidString.lowercased() == kCTDeviceUdidCharacteristicUuid.lowercased()) {
+        let chCount = service.characteristics?.count ?? 0
+        var foundChar = false
+        
+        for idx in (0..<chCount) {
+            let ch = service.characteristics![idx]
+            if (ch.uuid.uuidString.lowercased() == kCTDeviceUdidCharacteristicUuid.lowercased()) {
                 print("Discovered characteristic on the peripheral")
-                peripheral.readValue(for: ch!)
+                foundChar = true
+                peripheral.readValue(for: ch)
                 break
             }
+        }
+        
+        if (!foundChar) {
+            print("Peripheral did not have correct characteristic - cancelling")
+            _centralMgr.cancelPeripheralConnection(peripheral)
         }
     }
 
@@ -149,13 +169,17 @@ class CTCentral : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
         let savedDeviceInfo = _discoveredPeripherals[peripheral.identifier]
         let rssi = savedDeviceInfo?.rssi ?? 0
         
-        SwiftBleContactTracerPlugin.sendDeviceInfoToDart(deviceUdid: discoveredUDID, rssi: rssi)
+        // Get location info
+        CTLocation.instance.getLocation(callback: {(lat: Double, lon: Double) -> Void in
+            SwiftBleContactTracerPlugin.sendDeviceInfoToDart(deviceUdid: discoveredUDID, rssi: rssi, lat: lat, lon: lon)
+            if (savedDeviceInfo != nil) {
+                self._centralMgr.cancelPeripheralConnection(savedDeviceInfo!.peripheral)
+                self._discoveredPeripherals.removeValue(forKey: peripheral.identifier)
+            }
+        })
+        
 
         
-        if (savedDeviceInfo != nil) {
-            _centralMgr.cancelPeripheralConnection(savedDeviceInfo!.peripheral)
-            _discoveredPeripherals.removeValue(forKey: peripheral.identifier)
-        }
 
     }
     

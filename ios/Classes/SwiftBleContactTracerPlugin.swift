@@ -10,6 +10,9 @@ public class SwiftBleContactTracerPlugin: NSObject, FlutterPlugin {
     let instance = SwiftBleContactTracerPlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
     
+    // force permission check
+    let _ = CTLocation.instance
+    
   }
     
     public func applicationWillTerminate(_ application: UIApplication) {
@@ -56,7 +59,12 @@ public class SwiftBleContactTracerPlugin: NSObject, FlutterPlugin {
     }
   }
     
-    public static func sendDeviceInfoToDart(deviceUdid: String, rssi: NSNumber) {
-        channel.invokeMethod("discoveredDevice", arguments: ["deviceUdid": deviceUdid, "rssi": rssi])
+    public static func sendDeviceInfoToDart(deviceUdid: String, rssi: NSNumber, lat: Double, lon: Double) {
+        channel.invokeMethod("discoveredDevice", arguments: [
+            "deviceUdid": deviceUdid,
+            "rssi": rssi,
+            "lat": lat,
+            "lon": lon
+        ])
     }
 }
