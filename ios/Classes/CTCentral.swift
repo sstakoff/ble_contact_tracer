@@ -21,6 +21,8 @@ class CTCentral : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
     private static var instance: CTCentral!
     private var poweredOn = false
     private var startScanningWhenPoweredOn = false
+    private var stopScanningWhenPoweredOn = false
+
     
     private var _centralMgr: CBCentralManager!
     
@@ -43,7 +45,13 @@ class CTCentral : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
         if (central.state == .poweredOn) {
             poweredOn = true
+            
+            if (stopScanningWhenPoweredOn) {
+                stopScanningWhenPoweredOn = false
+                CTCentral.stopScanning()
+            }
             if (startScanningWhenPoweredOn) {
+                startScanningWhenPoweredOn = false
                 CTCentral.startScanning()
             }
         }
@@ -53,7 +61,9 @@ class CTCentral : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
     
     public static func startScanning() {
         if (instance.poweredOn == false) {
+            print("Start scan request deferred until power is on")
             instance.startScanningWhenPoweredOn = true
+            instance.stopScanningWhenPoweredOn = false
             return
         }
         
@@ -73,7 +83,16 @@ class CTCentral : NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
     }
     
     public static func stopScanning() {
-        instance._centralMgr.stopScan()
+        if (instance.poweredOn == false) {
+            print("Stop scan request deferred until power is on")
+            instance.stopScanningWhenPoweredOn = true
+            instance.startScanningWhenPoweredOn = false
+            return
+        }
+        
+        if (instance._centralMgr.isScanning) {
+            instance._centralMgr.stopScan()
+        }
     }
     
     public static func isScanning() -> Bool {

@@ -24,7 +24,7 @@ class CTLocation : NSObject, CLLocationManagerDelegate {
         
         _locManager = CLLocationManager()
         _locManager.delegate = self
-        _locManager.requestWhenInUseAuthorization()
+        _locManager.requestAlwaysAuthorization()
         
     }
     
@@ -38,11 +38,14 @@ class CTLocation : NSObject, CLLocationManagerDelegate {
             _locManager.requestAlwaysAuthorization()
             break
         case .denied:
+            _locManager.requestAlwaysAuthorization()
             break
         case .notDetermined:
             _locManager.requestAlwaysAuthorization()
             break
-        default:
+        case .restricted:
+            break
+        @unknown default:
             break
         }
     }

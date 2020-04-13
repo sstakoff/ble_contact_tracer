@@ -15,6 +15,7 @@ class CTPeripheral : NSObject, CBPeripheralManagerDelegate {
     private var poweredOn = false
     private var ready = false
     private var shouldAdvertiseWhenReady = false;
+    private var shouldAStopAdvertisingWhenPoweredOn = false;
     private var deviceUdid: String!
     
     private var _periphMgr: CBPeripheralManager!
@@ -44,7 +45,14 @@ class CTPeripheral : NSObject, CBPeripheralManagerDelegate {
     }
     
     public static func stopAdvertising() {
-        instance._periphMgr.stopAdvertising()
+        if (instance.poweredOn == false) {  
+            print("Stop advertising request deferred until power is on")
+            instance.shouldAStopAdvertisingWhenPoweredOn = true
+            return
+        }
+        if (instance._periphMgr.isAdvertising) {
+            instance._periphMgr.stopAdvertising()
+        }
     }
     
     public static func isAdvertising() -> Bool {
@@ -74,6 +82,11 @@ class CTPeripheral : NSObject, CBPeripheralManagerDelegate {
         if (peripheral.state == .poweredOn) {
             poweredOn = true
             createServices()
+        }
+        
+        if (shouldAStopAdvertisingWhenPoweredOn) {
+            shouldAStopAdvertisingWhenPoweredOn = false
+            CTPeripheral.stopAdvertising()
         }
     }
     
